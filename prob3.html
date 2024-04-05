@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo List</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  #task-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  .task {
+    margin-bottom: 10px;
+  }
+  .task button {
+    margin-left: 10px;
+  }
+  .task-form {
+    display: none;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+  <h1>Todo List</h1>
+  <form id="todo-form">
+    <label for="task-title">Task Title:</label>
+    <input type="text" id="task-title" required>
+    <label for="task-details">Task Details:</label>
+    <input type="text" id="task-details">
+    <button type="submit">Add Task</button>
+  </form>
+  <ul id="task-list"></ul>
+
+  <script>
+    const todoForm = document.getElementById('todo-form');
+    const taskList = document.getElementById('task-list');
+
+    todoForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const title = document.getElementById('task-title').value;
+      const details = document.getElementById('task-details').value;
+
+      if (title.trim() !== '') {
+        addTask(title, details);
+        todoForm.reset();
+      }
+    });
+
+    function addTask(title, details) {
+      const li = document.createElement('li');
+      li.classList.add('task');
+      li.innerHTML = `
+        <strong>${title}</strong>
+        <span>${details}</span>
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+        <form class="task-form">
+          <label for="edited-title">Edited Title:</label>
+          <input type="text" class="edited-title">
+          <label for="edited-details">Edited Details:</label>
+          <input type="text" class="edited-details">
+          <button type="submit">Save</button>
+        </form>
+      `;
+      taskList.appendChild(li);
+
+      const editButton = li.querySelector('.edit-btn');
+      const deleteButton = li.querySelector('.delete-btn');
+      const taskForm = li.querySelector('.task-form');
+      const editedTitleInput = li.querySelector('.edited-title');
+      const editedDetailsInput = li.querySelector('.edited-details');
+
+      editButton.addEventListener('click', function() {
+        taskForm.style.display = 'block';
+        editedTitleInput.value = title;
+        editedDetailsInput.value = details;
+      });
+
+      taskForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const newTitle = editedTitleInput.value;
+        const newDetails = editedDetailsInput.value;
+        title = newTitle;
+        details = newDetails;
+        li.querySelector('strong').textContent = newTitle;
+        li.querySelector('span').textContent = newDetails;
+        taskForm.style.display = 'none';
+      });
+
+      deleteButton.addEventListener('click', function() {
+        li.remove();
+      });
+    }
+  </script>
+</body>
+</html>

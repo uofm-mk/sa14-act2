@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Registration Form</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .error {
+    color: red;
+    font-size: 0.8em;
+  }
+</style>
+</head>
+<body>
+  <h1>User Registration Form</h1>
+  <form id="registration-form">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username">
+      <span class="error" id="username-error"></span>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email">
+      <span class="error" id="email-error"></span>
+    </div>
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password">
+      <span class="error" id="password-error"></span>
+    </div>
+    <button type="submit">Register</button>
+  </form>
+
+  <script>
+    const registrationForm = document.getElementById('registration-form');
+
+    registrationForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      let isValid = true;
+
+      // Username validation
+      const usernameError = document.getElementById('username-error');
+      if (username.length < 6) {
+        usernameError.textContent = 'Username must be at least 6 characters long.';
+        isValid = false;
+      } else {
+        usernameError.textContent = '';
+      }
+
+      // Email validation
+      const emailError = document.getElementById('email-error');
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        emailError.textContent = 'Invalid email format.';
+        isValid = false;
+      } else {
+        emailError.textContent = '';
+      }
+
+      // Password validation
+      const passwordError = document.getElementById('password-error');
+      const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passwordRegex.test(password)) {
+        passwordError.textContent = 'Password must be at least 8 characters long and contain at least one capital letter and one number.';
+        isValid = false;
+      } else {
+        passwordError.textContent = '';
+      }
+
+      if (isValid) {
+        // Submit the form if all fields are valid
+        registrationForm.submit();
+      }
+    });
+  </script>
+</body>
+</html>

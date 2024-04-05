@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+</head>
+<body>
+    <form id="weatherForm">
+        <label for="weather">Enter City Name:</label>
+        <input type="text" id="weather" name="weather">
+        <button type="submit">Get Weather</button>
+    </form>
+
+    <div id="currentWeather"></div>
+    <div id="forecast"></div>
+
+    <script>
+        document.addEventListener('submit', async function fetchWeatherData(event) {
+    event.preventDefault(); 
+    
+    const key = '5bf936930fdf49a784030203242803'; 
+    const weatherValue = document.getElementById("weather").value;
+    const currentWeatherContainer = document.getElementById("currentWeather");
+    const forecastContainer = document.getElementById("forecast");
+
+    let run = true;
+    let currentData;
+    let forecastData;
+
+    if (run) {
+        const currentRequestUrl = `https://api.weatherapi.com/v1/current.json?key=${key}&q=${weatherValue}`;
+        const currentResponse = await fetch(currentRequestUrl);
+        currentData = await currentResponse.json();
+        if (currentResponse.status !== 200) run = false;
+    }
+
+    if (run) {
+        const forecastRequestUrl = `https://api.weatherapi.com/v1/forecast.json?key=${key}&q=${weatherValue}&days=6`;
+        const forecastResponse = await fetch(forecastRequestUrl);
+        forecastData = await forecastResponse.json();
+        if (forecastResponse.status !== 200) run = false;
+    }
+
+    if (run) {
+        
+        currentWeatherContainer.innerHTML = `
+            <h2>Current Weather</h2>
+            <p>Location: ${currentData.location.name}, ${currentData.location.country}</p>
+            <p>Temperature: ${currentData.current.temp_c}°C</p>
+            <p>Condition: ${currentData.current.condition.text}</p>
+            <p>Humidity: ${currentData.current.humidity}%</p>
+            
+        `;
+
+        
+        forecastContainer.innerHTML = `
+            <h2>5-Day Forecast</h2>
+            <ul>
+                ${forecastData.forecast.forecastday.map(day => `
+                    <li>
+                        <p>Date: ${day.date}</p>
+                        <p>Max Temp: ${day.day.maxtemp_c}°C</p>
+                        <p>Min Temp: ${day.day.mintemp_c}°C</p>
+                        <p>Condition: ${day.day.condition.text}</p>
+                        
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    } else {
+        
+        currentWeatherContainer.innerHTML = `<p>Error fetching weather data</p>`;
+        forecastContainer.innerHTML = "";
+    }
+});
+
+    </script>
+</body>
+</html>
